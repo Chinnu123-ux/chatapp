@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Server } = require('socket.io');
-require('dotenv').config();
+require('dotenv').config(); // Load env vars (only for local dev)
 
 const app = express();
 const server = http.createServer(app);
@@ -13,25 +13,26 @@ const io = new Server(server, {
   cors: { origin: '*' }
 });
 
-// MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/chatapp', {
+// ✅ MongoDB Atlas connection
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => console.log("MongoDB connected"))
-  .catch(err => console.error(err));
+})
+.then(() => console.log("✅ MongoDB connected"))
+.catch(err => console.error("❌ MongoDB error:", err));
 
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(express.json());
 
-// User schema and model
+// ✅ User schema and model
 const User = mongoose.model('User', new mongoose.Schema({
   username: String,
   email: { type: String, unique: true },
   password: String
 }));
 
-// Message schema and model
+// ✅ Message schema and model
 const Message = mongoose.model('Message', new mongoose.Schema({
   from: String,
   to: String,
@@ -40,10 +41,10 @@ const Message = mongoose.model('Message', new mongoose.Schema({
   timestamp: { type: Date, default: Date.now }
 }));
 
-// In-memory online users map
+// ✅ In-memory online users map
 const onlineUsers = new Map();
 
-// Register endpoint
+// ✅ Register endpoint
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -56,7 +57,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login endpoint
+// ✅ Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -65,11 +66,15 @@ app.post('/login', async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(401).json({ error: "Wrong password" });
 
-  const token = jwt.sign({ email: user.email, username: user.username }, 'secret123');
+  const token = jwt.sign(
+    { email: user.email, username: user.username },
+    process.env.JWT_SECRET // ✅ secure secret
+  );
+
   res.json({ token, username: user.username });
 });
 
-// Fetch chat history between two users
+// ✅ Fetch chat history between two users
 app.get('/messages/:user1/:user2', async (req, res) => {
   const { user1, user2 } = req.params;
 
@@ -79,7 +84,7 @@ app.get('/messages/:user1/:user2', async (req, res) => {
         { from: user1, to: user2 },
         { from: user2, to: user1 }
       ]
-    }).sort({ timestamp: 1 }); // Oldest to newest
+    }).sort({ timestamp: 1 });
 
     res.json(messages);
   } catch (err) {
@@ -88,7 +93,7 @@ app.get('/messages/:user1/:user2', async (req, res) => {
   }
 });
 
-// Socket.io handling
+// ✅ Socket.io handling
 io.on('connection', socket => {
   console.log('User connected', socket.id);
 
@@ -129,4 +134,6 @@ io.on('connection', socket => {
   });
 });
 
-server.listen(5000, () => console.log("Server running on http://localhost:5000"));
+// ✅ Dynamic PORT for Render or fallback to 5000
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
