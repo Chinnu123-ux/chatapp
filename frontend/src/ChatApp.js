@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import EmojiPicker from "emoji-picker-react";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://real-chat-app-lsni.onrender.com");
 
 export default function ChatApp({ user }) {
   const { username } = user;
@@ -51,7 +51,7 @@ export default function ChatApp({ user }) {
     const fetchMessages = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/messages/${username}/${selectedUser}`
+          `https://real-chat-app-lsni.onrender.com/messages/${username}/${selectedUser}`
         );
         if (!res.ok) throw new Error("Failed to fetch messages");
         const data = await res.json();
