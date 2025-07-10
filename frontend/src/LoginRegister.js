@@ -7,7 +7,8 @@ export default function LoginRegister({ setUser }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const API = "http://localhost:5000";
+  // ✅ Use production backend API
+  const API = "https://real-chat-app-lsni.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -212,7 +213,6 @@ export default function LoginRegister({ setUser }) {
         </div>
         <div className="right">
           <h1>WELCOME<br /> TO THE  <br />CHAT APP<br /></h1>
-          
         </div>
       </div>
     </div>
