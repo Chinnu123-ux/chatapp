@@ -1,17 +1,15 @@
-import React, { useState } from "react";
-import LoginRegister from "./LoginRegister";
-import ChatApp from "./ChatApp";
+import React, { useState } from 'react';
+import LoginRegister from './LoginRegister';
+import Chat from './Chat';
 
-export default function App() {
-  const [user, setUser] = useState(null); // { username, token }
+function App() {
+  const [user, setUser] = useState(null);
 
   return (
     <div>
-      {!user ? (
-        <LoginRegister setUser={setUser} />
-      ) : (
-        <ChatApp user={user} />
-      )}
+      {!user ? <LoginRegister onLoggedIn={setUser} /> : <Chat user={user} />}
     </div>
   );
 }
+
+export default App;
