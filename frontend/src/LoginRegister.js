@@ -9,14 +9,34 @@ const LoginRegister = ({ onLoggedIn }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const res = await axios.post('http://localhost:5000/login', login);
-    onLoggedIn(res.data);
+
+    if (!login.email || !login.password) {
+      alert("Please fill in both email and password.");
+      return;
+    }
+
+    try {
+      const res = await axios.post('http://localhost:5000/login', login);
+      onLoggedIn(res.data);
+    } catch (err) {
+      alert(err.response?.data?.error || "Login failed");
+    }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    await axios.post('http://localhost:5000/register', register);
-    onLoggedIn({ username: register.username, email: register.email });
+
+    if (!register.username || !register.email || !register.password) {
+      alert("Please fill in all registration fields.");
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:5000/register', register);
+      onLoggedIn({ username: register.username, email: register.email });
+    } catch (err) {
+      alert(err.response?.data?.error || "Registration failed");
+    }
   };
 
   return (
@@ -24,21 +44,47 @@ const LoginRegister = ({ onLoggedIn }) => {
       <div className="form-container sign-in-container">
         <form onSubmit={handleLogin}>
           <h1>Sign in</h1>
-          <input type="email" placeholder="Email" onChange={e => setLogin({ ...login, email: e.target.value })} />
-          <input type="password" placeholder="Password" onChange={e => setLogin({ ...login, password: e.target.value })} />
-          
+          <input
+            type="email"
+            placeholder="Email"
+            value={login.email}
+            onChange={e => setLogin({ ...login, email: e.target.value })}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={login.password}
+            onChange={e => setLogin({ ...login, password: e.target.value })}
+          />
           <button>Sign In</button>
         </form>
       </div>
+
       <div className="form-container sign-up-container">
         <form onSubmit={handleRegister}>
           <h1>Create Account</h1>
-          <input type="text" placeholder="Username" onChange={e => setRegister({ ...register, username: e.target.value })} />
-          <input type="email" placeholder="Email" onChange={e => setRegister({ ...register, email: e.target.value })} />
-          <input type="password" placeholder="Password" onChange={e => setRegister({ ...register, password: e.target.value })} />
+          <input
+            type="text"
+            placeholder="Username"
+            value={register.username}
+            onChange={e => setRegister({ ...register, username: e.target.value })}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={register.email}
+            onChange={e => setRegister({ ...register, email: e.target.value })}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={register.password}
+            onChange={e => setRegister({ ...register, password: e.target.value })}
+          />
           <button>Sign Up</button>
         </form>
       </div>
+
       <div className="overlay-container">
         <div className="overlay">
           <div className="overlay-panel overlay-left">
@@ -48,7 +94,7 @@ const LoginRegister = ({ onLoggedIn }) => {
           </div>
           <div className="overlay-panel overlay-right">
             <h1>Hello, Friend!</h1>
-            <p>Enter your personal details and start journey with us</p>
+            <p>Enter your personal details and start your journey with us</p>
             <button className="ghost" onClick={() => setIsSignUp(true)}>Sign Up</button>
           </div>
         </div>
