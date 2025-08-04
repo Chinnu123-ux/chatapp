@@ -5,15 +5,23 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const socketIO = require('socket.io');
+const dotenv = require('dotenv');
+
 const authRoutes = require('./routes/auth');
 const messageRoutes = require('./routes/messages');
 const Message = require('./models/Message');
+
+dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, { cors: { origin: '*' } });
 
-mongoose.connect('mongodb://localhost:27017/chatapp');
+// ✅ Use Atlas URI from .env or fallback to local MongoDB
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/chatapp';
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 app.use(cors());
 app.use(express.json());
@@ -21,7 +29,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/', authRoutes);
 app.use('/messages', messageRoutes);
 
-// Upload route
+// Image Upload Route
 const storage = multer.diskStorage({
   destination: './uploads/',
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -29,8 +37,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 app.post('/upload', upload.single('image'), (req, res) => {
   const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-res.json({ imageUrl });
-
+  res.json({ imageUrl });
 });
 
 const users = {};
@@ -62,4 +69,3 @@ io.on('connection', socket => {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Backend running on port ${PORT}`));
-
