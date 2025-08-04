@@ -28,7 +28,9 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 app.post('/upload', upload.single('image'), (req, res) => {
-  res.json({ imageUrl: `http://localhost:5000/uploads/${req.file.filename}` });
+  const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+res.json({ imageUrl });
+
 });
 
 const users = {};
