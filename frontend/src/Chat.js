@@ -96,3 +96,131 @@ export default function Chat({ user }) {
             key={u}
             onClick={() => selectUser(u)}
             style={{
+              padding: "10px",
+              background: to === u ? "#444" : "#333",
+              marginBottom: "8px",
+              cursor: "pointer",
+              borderRadius: "6px",
+              position: "relative",
+            }}
+          >
+            {u === user.username ? "You" : u}
+            {unreadCounts[u] > 0 && (
+              <span
+                style={{
+                  background: "red",
+                  borderRadius: "50%",
+                  padding: "4px 8px",
+                  position: "absolute",
+                  right: "10px",
+                  top: "10px",
+                  fontSize: "12px",
+                }}
+              >
+                {unreadCounts[u]}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div style={{ width: "75%", display: "flex", flexDirection: "column" }}>
+        <div style={{ background: "#eee", padding: "10px", textAlign: "center", borderBottom: "1px solid #ccc" }}>
+          <h3>{to ? `Chatting with: ${to === user.username ? "You" : to}` : "Select a user"}</h3>
+        </div>
+
+        <div style={{ flex: 1, padding: "20px", overflowY: "auto", background: "#f4f4f4" }}>
+          {messages.map((m, i) => (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: m.from === user.username ? "flex-end" : "flex-start",
+                marginBottom: "10px",
+              }}
+            >
+              <div
+                style={{
+                  background: "#fff",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  maxWidth: "60%",
+                  wordBreak: "break-word",
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                }}
+              >
+                {m.message && <div>{m.message}</div>}
+                {m.image && <img src={m.image} alt="img" style={{ maxWidth: "150px", borderRadius: "8px" }} />}
+                <div style={{ fontSize: "11px", color: "#777", marginTop: "5px" }}>
+                  {new Date(m.createdAt).toLocaleTimeString()}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", padding: "10px", background: "#fff", borderTop: "1px solid #ccc", gap: "10px" }}>
+          <input
+            type="text"
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+            placeholder="Type message..."
+            style={{ flex: 1, padding: "10px", borderRadius: "6px", border: "1px solid #ccc" }}
+          />
+
+          <button
+            onClick={() => setShowEmoji(!showEmoji)}
+            style={{
+              background: "#ff5733",
+              color: "#fff",
+              border: "none",
+              borderRadius: "30px",
+              padding: "10px 20px",
+              cursor: "pointer",
+            }}
+          >
+            😊
+          </button>
+
+          <label
+            style={{
+              background: "#ff5733",
+              color: "#fff",
+              border: "none",
+              borderRadius: "30px",
+              padding: "10px 20px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            📎
+            <input type="file" style={{ display: "none" }} onChange={uploadImage} />
+          </label>
+
+          <button
+            onClick={sendMessage}
+            style={{
+              background: "#ff5733",
+              color: "#fff",
+              border: "none",
+              borderRadius: "30px",
+              padding: "10px 20px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            SEND
+          </button>
+        </div>
+
+        {showEmoji && (
+          <div style={{ position: "absolute", bottom: "80px", right: "20px", zIndex: 10 }}>
+            <EmojiPicker onEmojiClick={(e) => setMsg(msg + e.emoji)} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
