@@ -13,7 +13,7 @@ export default function Chat({ user }) {
   const socketRef = useRef();
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io("https://chat-app-backend-veyq.onrender.com");
 
     socketRef.current.emit("join", user.username);
 
