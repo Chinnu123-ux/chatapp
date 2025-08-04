@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import EmojiPicker from "emoji-picker-react";
 
-const BACKEND_URL = "https://chat-app-backend-veyq.onrender.com"; // your backend URL
+const BACKEND_URL = "https://chat-app-backend-eagq.onrender.com"; // your backend URL
 
 export default function Chat({ user }) {
   const [users, setUsers] = useState([]);
