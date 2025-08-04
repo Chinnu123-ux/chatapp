@@ -1,6 +1,9 @@
+// === LoginRegister.jsx ===
 import React, { useState } from 'react';
 import './LoginRegister.css';
 import axios from 'axios';
+
+const BACKEND_URL = 'https://chat-app-backend-eagq.onrender.com'; // ✅ your deployed backend URL
 
 const LoginRegister = ({ onLoggedIn }) => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -16,7 +19,7 @@ const LoginRegister = ({ onLoggedIn }) => {
     }
 
     try {
-      const res = await axios.post('http://localhost:5000/login', login);
+      const res = await axios.post(`${BACKEND_URL}/login`, login);
       onLoggedIn(res.data);
     } catch (err) {
       alert(err.response?.data?.error || "Login failed");
@@ -32,7 +35,7 @@ const LoginRegister = ({ onLoggedIn }) => {
     }
 
     try {
-      await axios.post('http://localhost:5000/register', register);
+      await axios.post(`${BACKEND_URL}/register`, register);
       onLoggedIn({ username: register.username, email: register.email });
     } catch (err) {
       alert(err.response?.data?.error || "Registration failed");
